@@ -29,7 +29,7 @@
 		    padding: 4px;
 		}
 
-		.card { 
+		.board { 
 		    display: block; 
 		    padding: 2px;
 		}
@@ -60,20 +60,18 @@
 		    Trello.members.get("me", function(member){
 		        $("#fullName").text(member.fullName);
 		    
-		        var $cards = $("<div>")
-		            .text("Loading Cards...")
-		            .appendTo("#output");
+		        var $boards = $("<div>").text("Loading Sprint Boards...").appendTo("#output");
 
-		        // Output a list of all of the cards that the member 
-		        // is assigned to
-		        Trello.get("members/me/cards", function(cards) {
-		            $cards.empty();
-		            $.each(cards, function(ix, card) {
-		                $("<a>")
-		                .attr({href: card.url, target: "trello"})
-		                .addClass("card")
-		                .text(card.name)
-		                .appendTo($cards);
+		        Trello.get("members/me/boards", function(boards) {
+		            $boards.empty();
+		            $.each(boards, function(ix, board) {
+		            	if(board.name.substring(0, 6) == "Sprint") {
+							$("<a>")
+			                .attr({href: board.url, target: "trello"})
+			                .addClass("board")
+			                .text(board.name)
+			                .appendTo($boards);
+		                }
 		            });  
 		        });
 		    });
@@ -91,13 +89,7 @@
 		    updateLoggedIn();
 		};
 		                          
-		Trello.authorize({
-		    interactive:false,
-		    success: onAuthorize
-		});
-
-		$("#connectLink")
-		.click(function(){
+		$("#connectLink").click(function(){
 		    Trello.authorize({
 		        type: "popup",
 		        success: onAuthorize
@@ -105,6 +97,11 @@
 		});
 		    
 		$("#disconnect").click(logout);
+
+		Trello.authorize({
+		    interactive:false,
+		    success: onAuthorize
+		});
 	</script>
 
 </body>
